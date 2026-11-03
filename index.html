@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蜀韵·成都 | 成都文化旅游宣传</title>
+
+<style>
+/* ============================================================
+   1. 全局变量与基础重置
+   ============================================================ */
+   /**//**/
+:root {
+  /* 严格按照要求的主题色 */
+  --gold:        #C9A227;
+  --gold-light:  #E8C86A;
+  --ink:         #1A1A1A;
+  --paper:       #FAF7F0;
+
+  /* 辅助色 */
+  --text-main:   #333333;
+  --text-muted:  #666666;
+  
+  /* 尺寸与动画 */
+  --header-h:    76px;
+  --radius:      8px;
+  --transition:  0.3s ease;
+}
+
+/* 基础重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* 防止移动端横向滚动 */
+  overflow-x: hidden; 
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background-color: var(--paper);
+  color: var(--text-main);
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--transition);
+}
+
+ul {
+  list-style: none;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+/* 键盘无障碍焦点 */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* ============================================================
+   2. 页头 (Header)
+   ============================================================ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5vw;
+  background-color: rgba(250, 247, 240, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+  transition: box-shadow var(--transition);
+}
+
+/* JS 控制的滚动阴影 */
+.header--scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* 左侧品牌区 */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand__logo {
+  width: 38px;
+  height: 38px;
+  transition: transform 0.5s ease;
+}
+
+.brand:hover .brand__logo {
+  transform: rotate(90deg);
+}
+
+.brand__title {
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--ink);
+}
+
+.brand__title .dot {
+  color: var(--gold);
+}
+
+/* 右侧导航 */
+.nav__list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav__link {
+  position: relative;
+  padding: 6px 16px;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+/* 下划线动画 */
+.nav__link::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--gold);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--transition);
+}
+
+.nav__link:hover {
+  color: var(--gold);
+}
+
+.nav__link:hover::after {
+  transform: scaleX(1);
+}
+
+/* 首页高亮 */
+.nav__link--active {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.nav__link--active::after {
+  transform: scaleX(1);
+}
+
+/* ============================================================
+   3. Banner 轮播区
+   ============================================================ */
+.banner {
+  position: relative;
+  height: calc(100vh - var(--header-h));
+  min-height: 520px;
+  background-color: var(--ink);
+  overflow: hidden;
+}
+
+/* 单张轮播图 */
+.banner__slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none; /* 非激活状态不响应点击 */
+}
+
+.banner__slide--active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+/* 暗色渐变遮罩，确保文字可读 */
+.banner__slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(26,26,26,0.8) 0%, rgba(26,26,26,0.3) 60%, rgba(26,26,26,0.6) 100%);
+}
+
+/* 使用渐变占位，坚决不用外链防止破图 */
+.banner__slide--1 {
+  background: linear-gradient(135deg, #2B1D0E 0%, #6B4E1C 50%, #C9A227 100%);
+}
+.banner__slide--2 {
+  background: linear-gradient(135deg, #10221A 0%, #2C5B3C 50%, #7FA65C 100%);
+}
+.banner__slide--3 {
+  background: linear-gradient(135deg, #0E1E2B 0%, #1F5068 50%, #4E8FA8 100%);
+}
+
+/* 轮播文案内容 */
+.banner__content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: 0 8vw;
+  color: var(--paper);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s 0.2s ease;
+}
+.banner__slide--active .banner__content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.banner__tag {
+  display: inline-block;
+  padding: 4px 14px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--gold-light);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.banner__title {
+  font-family: "Songti SC", "STSong", serif;
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1.3;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+}
+
+.banner__desc {
+  font-size: 16px;
+  color: rgba(250, 247, 240, 0.85);
+  margin-bottom: 36px;
+  max-width: 500px;
+}
+
+.banner__btn {
+  display: inline-block;
+  padding: 12px 36px;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--gold-light);
+  border: 1px solid var(--gold);
+  border-radius: 30px;
+  transition: all var(--transition);
+}
+
+.banner__btn:hover {
+  background-color: var(--gold);
+  color: var(--ink);
+}
+
+/* 左右箭头 */
+.banner__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  width: 48px;
+  height: 48px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--paper);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.banner__arrow:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+
+.banner__arrow--prev { left: 24px; }
+.banner__arrow--next { right: 24px; }
+/* 底部圆点 */
+.banner__dots {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  gap: 12px;
+}
+
+.banner__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.banner__dot--active {
+  width: 30px;
+  border-radius: 10px;
+  background: var(--gold);
+}
+
+/* ============================================================
+   4. 通用区块标题
+   ============================================================ */
+.section-head {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-head__line {
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+  margin: 0 auto 16px;
+}
+
+.section-head__title {
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 32px;
+  color: inherit;
+  letter-spacing: 2px;
+}
+
+.section-head__sub {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   5. 宣传视频区
+   ============================================================ */
+.video-section {
+  padding: 100px 5vw;
+  background-color: var(--ink);
+  color: var(--paper);
+}
+/* 视频容器 */
+.video-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(201, 162, 39, 0.15);
+  background-color: #000;
+  position: relative;
+}
+
+.video-wrap video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 视频错误提示 */
+.video-error {
+  display: none;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--gold-light);
+  background: rgba(201, 162, 39, 0.05);
+  font-size: 15px;
+}
+
+.video-error--show {
+  display: block;
+}
+
+/* ============================================================
+   6. 城市介绍区
+   ============================================================ */
+.intro {
+  padding: 100px 5vw;
+  background-color: var(--paper);
+}
+
+.intro__inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.intro__text {
+  font-size: 16px;
+  line-height: 2.2;
+  color: var(--text-main);
+  text-indent: 2em;
+  text-align: justify;
+  margin-bottom: 20px;
+}
+
+.intro__divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin: 50px auto 0;
+  border-radius: 2px;
+}
+
+/* ============================================================
+  7. 页脚
+   ============================================================ */
+.footer {
+  background-color: var(--ink);
+  padding: 72px 5vw 0;
+  color: #888888;
+  font-size: 14px;
+}
+
+.footer__main {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 48px;
+  padding-bottom: 56px;
+}
+
+.footer__brand {
+  flex: 1 1 260px;
+}
+
+.footer__brand-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.footer__brand-top svg {
+  width: 32px;
+  height: 32px;
+}
+
+.footer__title {
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 20px;
+  color: var(--paper);
+  letter-spacing: 2px;
+}
+
+.footer__slogan {
+  color: var(--gold-light);
+  letter-spacing: 1px;
+}
+
+.footer__heading {
+  color: var(--paper);
+  font-size: 16px;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.footer__nav {
+  flex: 0 1 200px;
+}
+
+.footer__nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.footer__nav-list a:hover,
+.footer__contact a:hover {
+  color: var(--gold);
+}
+
+.footer__contact {
+  flex: 0 1 260px;
+}
+
+.footer__contact li {
+  margin-bottom: 12px;
+}
+
+.footer__bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #666666;
+}
+
+/* ============================================================
+   8. 响应式适配 (断点 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+  :root {
+    --header-h: 60px;
+  }
+
+  /* 页头适配：允许导航换行，防止挤出屏幕 */
+  .header {
+    padding: 0 16px;
+    flex-wrap: wrap; /* 允许换行 */
+    height: auto;
+    min-height: var(--header-h);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    gap: 10px;
+  }
+
+  .brand__title {
+    font-size: 20px;
+  }
+
+  .nav {
+    width: 100%;
+  }
+
+  .nav__list {
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .nav__link {
+    padding: 4px 8px;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  .nav__link::after {
+    left: 8px;
+    right: 8px;
+  }
+
+  /* Banner 适配 */
+  .banner {
+    min-height: 480px;
+  }
+
+  .banner__content {
+    padding: 0 20px;
+  }
+
+  .banner__desc {
+    font-size: 15px;
+  }
+
+  .banner__arrow {
+    display: none; /* 移动端隐藏箭头，使用圆点或滑动操作 */
+  }
+
+  /* 区块间距缩小 */
+  .video-section,
+  .intro {
+    padding: 64px 20px;
+  }
+
+  .section-head {
+    margin-bottom: 32px;
+  }
+
+  /* 页脚纵向排列 */
+  .footer__main {
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .footer__bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     页头
+     ============================================================ -->
+<header class="header" id="header">
+  <a class="brand" href="index.html" aria-label="蜀韵·成都首页">
+    <!-- 内联 SVG Logo，防止外链失效 -->
+    <svg class="brand__logo" viewBox="0 0 48 48" aria-hidden="true">
+      <defs>
+        <linearGradient id="goldLogo" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#E8C86A"/>
+          <stop offset="100%" stop-color="#C9A227"/>
+        </linearGradient>
+      </defs>
+      <circle cx="24" cy="24" r="21" fill="none" stroke="url(#goldLogo)" stroke-width="2"/>
+      <circle cx="24" cy="24" r="6" fill="url(#goldLogo)"/>
+      <circle cx="24" cy="10" r="3" fill="url(#goldLogo)"/>
+      <circle cx="38" cy="24" r="3" fill="url(#goldLogo)"/>
+      <circle cx="24" cy="38" r="3" fill="url(#goldLogo)"/>
+      <circle cx="10" cy="24" r="3" fill="url(#goldLogo)"/>
+    </svg>
+    <span class="brand__title">蜀韵<span class="dot">·</span>成都</span>
+  </a>
+
+  <nav class="nav" aria-label="主导航">
+    <ul class="nav__list">
+      <!-- 首页高亮 -->
+      <li><a class="nav__link nav__link--active" href="index.html" aria-current="page">首页</a></li>
+      <li><a class="nav__link" href="food.html">美食</a></li>
+      <li><a class="nav__link" href="spots.html">景点</a></li>
+      <li><a class="nav__link" href="culture.html">文化</a></li>
+      <li><a class="nav__link" href="guide.html">攻略</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ============================================================
+     Banner 轮播区（3张，用渐变做背景）
+     ============================================================ -->
+<section class="banner" id="banner" aria-label="成都风光轮播">
+  
+  <!-- 第1张 -->
+  <div class="banner__slide banner__slide--1 banner__slide--active">
+    <div class="banner__content">
+      <span class="banner__tag">CHENGDU · 烟火</span>
+      <h1 class="banner__title">一城烟火，千年蜀韵</h1>
+      <p class="banner__desc">青砖灰瓦的宽窄巷子里，盖碗茶的热气升起，川剧的唱腔穿过街巷。这是成都，一座把日子过成诗的城市。</p>
+      <a class="banner__btn" href="#">了解更多</a>
+    </div>
+  </div>
+
+  <!-- 第2张 -->
+  <div class="banner__slide banner__slide--2">
+    <div class="banner__content">
+      <span class="banner__tag">GIANT PANDA · 熊猫</span>
+      <h2 class="banner__title">在熊猫的故乡慢下来</h2>
+      <p class="banner__desc">清晨的竹林里，圆滚滚的身影咀嚼着嫩笋。成都是大熊猫的家园，也是每一个疲惫灵魂的休息站。</p>
+      <a class="banner__btn" href="#">了解更多</a>
+    </div>
+  </div>
+
+  <!-- 第3张 -->
+  <div class="banner__slide banner__slide--3">
+    <div class="banner__content">
+      <span class="banner__tag">MOUNTAIN · 山水</span>
+      <h2 class="banner__title">拜水都江堰，问道青城山</h2>
+      <p class="banner__desc">两千年前的水利奇迹至今灌溉着天府之国，青城山的幽静藏着道家千年的智慧与呼吸。</p>
+      <a class="banner__btn" href="#">了解更多</a>
+    </div>
+  </div>
+  <!-- 控制按钮 -->
+  <button class="banner__arrow banner__arrow--prev" aria-label="上一张">❮</button>
+  <button class="banner__arrow banner__arrow--next" aria-label="下一张">❯</button>
+
+  <div class="banner__dots" role="tablist">
+    <button class="banner__dot banner__dot--active" aria-label="第1张"></button>
+    <button class="banner__dot" aria-label="第2张"></button>
+    <button class="banner__dot" aria-label="第3张"></button>
+  </div>
+</section>
+
+<!-- ============================================================
+     视频区
+     ============================================================ -->
+<section class="video-section">
+<div class="video-wrap">
+  <!-- 引用你本地的视频文件 -->
+  <video id="cityVideo" controls autoplay loop muted playsinline preload="metadata" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='540'%3E%3Crect width='960' height='540' fill='%231A1A1A'/%3E%3Ctext x='50%25' y='50%25' fill='%23C9A227' font-size='32' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif'%3E蜀韵·成都 宣传片%3C/text%3E%3C/svg%3E">
+    <source src="cd1.mp4" type="video/mp4">
+    您的浏览器不支持 HTML5 视频播放。
+  </video>
+</div>
+</section>
+
+<!-- ============================================================
+ 1962195198: 10-29 09:33:02
+     介绍区（字数：293字）
+     ============================================================ -->
+<section class="intro">
+  <div class="intro__inner">
+    <div class="section-head">
+      <span class="section-head__line"></span>
+      <h2 class="section-head__title">关于成都</h2>
+      <p class="section-head__sub">About Chengdu</p>
+    </div>
+    
+    <p class="intro__text">
+      成都，一座来了就不想走的城市。三千年来，这里城址未迁、城名未改，蜀锦蜀绣与川剧诗词在此绵延不绝。都江堰的流水滋养出“水旱从人、不知饥馑”的天府之国，青城山的幽静、武侯祠的厚重、杜甫草堂的清雅，让自然与人文相拥而生。
+    </p>
+    <p class="intro__text">
+      清晨的人民公园里，盖碗茶冒着热气，竹椅吱呀作响；入夜的锦里与宽窄巷子，灯笼映着青砖灰瓦，川剧变脸引来阵阵喝彩。火锅翻滚的红油、街边的担担面与龙抄手，把城市的热情写进每一餐烟火里。
+    </p>
+    <p class="intro__text">
+      今天的成都，既有大熊猫的憨态可掬，也有公园城市的绿意盎然；既有太古里的时尚潮流，也有街边茶馆的从容闲适。快与慢、新与旧在这里恰好相融，一半烟火，一半诗意。
+    </p>
+
+    <div class="intro__divider"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     页脚
+     ============================================================ -->
+<footer class="footer">
+  <div class="footer__main">
+    <!-- 品牌信息 -->
+    <div class="footer__brand">
+      <div class="footer__brand-top">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <defs>
+            <linearGradient id="goldLogoFooter" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#E8C86A"/>
+              <stop offset="100%" stop-color="#C9A227"/>
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="21" fill="none" stroke="url(#goldLogoFooter)" stroke-width="2"/>
+          <circle cx="24" cy="24" r="6" fill="url(#goldLogoFooter)"/>
+        </svg>
+        <span class="footer__title">蜀韵·成都</span>
+      </div>
+      <p class="footer__slogan">一半烟火 · 一半诗意</p>
+    </div>
+
+    <!-- 快捷导航 -->
+    <div class="footer__nav">
+      <h3 class="footer__heading">快速导航</h3>
+      <ul class="footer__nav-list">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="food.html">美食</a></li>
+        <li><a href="spots.html">景点</a></li>
+        <li><a href="culture.html">文化</a></li>
+        <li><a href="guide.html">攻略</a></li>
+      </ul>
+    </div>
+
+    <!-- 联系方式 -->
+    <div class="footer__contact">
+      <h3 class="footer__heading">联系我们</h3>
+      <ul>
+        <li>邮箱：<a href="mailto:hello@chengdu.com">hello@chengdu.com</a></li>
+        <li>电话：<a href="tel:02888888888">028-8888 8888</a></li>
+        <li>地址：四川省成都市青羊区</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+1962195198: 10-29 09:33:36
+  <!-- 版权信息 -->
+  <div class="footer__bottom">
+    <span>© 2025 蜀韵·成都 · 成都文化旅游宣传</span>
+    <span>蜀ICP备XXXXXXXX号</span>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JavaScript 交互逻辑
+     ============================================================ -->
+<script>
+(function() {
+  'use strict';
+
+  /* ---------- 1. Banner 轮播控制 ---------- */
+  const slides = document.querySelectorAll('.banner__slide');
+  const dots = document.querySelectorAll('.banner__dot');
+  const prevBtn = document.querySelector('.banner__arrow--prev');
+  const nextBtn = document.querySelector('.banner__arrow--next');
+  const banner = document.querySelector('.banner');
+  
+  let currentIndex = 0;
+  let timer = null;
+  const INTERVAL = 5000; // 5秒切换
+
+  // 切换指定索引的函数
+  function goTo(index) {
+    // 处理边界循环
+    currentIndex = (index + slides.length) % slides.length;
+    
+    // 更新图片状态
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('banner__slide--active', i === currentIndex);
+    });
+    
+    // 更新圆点状态
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('banner__dot--active', i === currentIndex);
+    });
+  }
+
+  // 下一张 / 上一张
+  function nextSlide() { goTo(currentIndex + 1); }
+  function prevSlide() { goTo(currentIndex - 1); }
+
+  // 自动播放与暂停
+  function startAutoPlay() {
+    stopAutoPlay(); // 防止重复绑定
+    timer = setInterval(nextSlide, INTERVAL);
+  }
+
+  function stopAutoPlay() {
+    if (timer) clearInterval(timer);
+  }
+
+  // 绑定交互事件
+  nextBtn.addEventListener('click', () => { nextSlide(); startAutoPlay(); });
+  prevBtn.addEventListener('click', () => { prevSlide(); startAutoPlay(); });
+  
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => { goTo(i); startAutoPlay(); });
+  });
+
+  // 鼠标悬停暂停
+  banner.addEventListener('mouseenter', stopAutoPlay);
+  banner.addEventListener('mouseleave', startAutoPlay);
+
+  // 初始化轮播
+  goTo(0);
+  startAutoPlay();
+
+
+  /* ---------- 2. 视频加载错误捕获 ---------- */
+  const video = document.getElementById('cityVideo');
+  const videoError = document.getElementById('videoError');
+
+  // 监听 <video> 的错误事件。如果所有 <source> 都失效，会触发此事件。
+  // 使用 try-catch 机制防止出现未捕获异常
+  if (video) {
+    video.addEventListener('error', function(e) {
+      try {
+        // 隐藏视频元素，显示友好提示
+        video.style.display = 'none';
+        videoError.classList.add('video-error--show');
+      } catch (err) {
+        console.warn('视频错误处理发生异常:', err);
+      }
+    });
+
+    // 处理 <source> 的报错，防止控制台输出红色异常
+    const sources = video.querySelectorAll('source');
+    sources.forEach(source => {
+      source.addEventListener('error', function() {
+        // 只是静默处理单个 source 失败，因为可能还有其他 source 备用
+      });
+    });
+  }
+
+
+  /* ---------- 3. 页头滚动监听 ---------- */
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 50) {
+      header.classList.add('header--scrolled');
+    } else {
+      header.classList.remove('header--scrolled');
+    }
+  }, { passive: true });
+
+})();
+</script>
+
+</body>
+</html>
